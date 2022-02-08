@@ -1,0 +1,135 @@
+---
+title: "The Story Behind Toronto COVID-19 Cases Numbers"
+subtitle: "Marginalized communities expressence different infection rates due to Systemic Racism"
+author: 
+  - Zixian He
+thanks: "Code and data are available at: https://github.com/ZixianHe/starter_folder"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+abstract: "COVID-19 continues to spread around the world, with the rise of deaths, more infected cases, and the continuous emergence of mutant strains brings more new challenges to epidemic prevention. Covid-19 Cases in Toronto data was taken from the City of Toronto Portal to analyze and compare ten neighbourhoods that with highest cases and how infection rates different with each neighbourhoods. Although the number of Covid-19 cases has only increased, the marginalized communities expressence higher infection rate in the GTA area. Related report shows that all ethnic groups and low-income people except white people are at high risk of COVID-19 infection."
+output:
+  bookdown::pdf_document2
+toc: FALSE
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(opendatatoronto)
+library(dplyr)
+```
+
+# Introduction
+Looking back at major human infections in history, the Black Death led people to reflect on the importance of urban cleanliness, 19th-century cholera triggered massive urban redevelopment programs, and the 1918 Spanish flu brought awareness of the importance of social public health system intervention and influenza prevention[@lessons]. In some countries and regions, many deaths at the epicentre of the epidemic are concentrated in vulnerable groups such as ethnic minorities and poor people. The epidemic has magnified the shortcomings and defects of internal governance. It is necessary to improve the system and mechanism for the prevention and treatment of major epidemics, and to improve the public health emergency management system. It is necessary to promote the focus of social governance and services to move down to the grassroots level. This is an important lesson the epidemic has taught the world.
+
+From the Justinian plague and the Black Death, to the 1918 flu, history is full of examples of disease outbreaks that have had a profound impact on society.These pandemics affected the political situation and disrupted social order, some of which eventually led to social unrest. One possible reason is that epidemics may expose or exacerbate pre-existing weaknesses in society, such as imperfect social security systems, lack of trust in institutions, or consider government indifferent, incompetent or corrupt[@history]. Historically, outbreaks of infectious diseases have also led to ethnic or religious resistance, or heightened tensions between economic classes. The problems of social and economic inequality make it harder a challenge to control the rapid spread of coronavirus disease around the world, along with institutional racism. In crisis times whether economic, environmental, safe or health-related crisis, minorities are often used as scapegoats, becoming targets of racism, exclusivity, and violent speech and behavior[@covid2].
+ 
+Systemic racism is a determinant of health inequalities. There is a clear racialized distribution of poverty in Canada. Toronto Public Health's COVID-19 statistics reaffirm this unpalatable reality. Racial discrimination against indigenous peoples, blacks, and other people of color exacerbates their socioeconomic and political marginalization, as well as contributes to health disparities[@covid]. In this article, I'll use the City of Toronto's COVID-19 case data to explore the neighborhoods with the highest number of infections, and compare and analyze the differences in infection rates across neighborhoods. In addition, analysis of census data for neighborhoods is also necessary.
+
+# Data
+To better understand infections since the outbreak began and which communities have been most affected by the outbreak, I utilized the COVID-19 Cases in Toronto on Toronto's open data portal[@data]. The data set is released by Toronto Public Health, and the data is refreshed weekly. The latest refresh date is January 26, 2022. The raw data reports COVID-19 cases among Toronto residents, including variables such as demographics, region, source of infection, severity, and more. The paper uses R[@citeR], tidyverse[@tidy], and dplyr[@citedplyr] to process the data with the aim to make the data more concise.
+
+Based on the purpose of the research and the characteristics of the data itself, I chose the Neighbourhood Name variable from the raw data as a separate data frame to prepare for the count of the total number of infections in the subsequent communities, since the raw data did not include the total number of cases per neighbourhood. Then select the ten neighborhoods with the most infections.
+
+The map of cumulative COVID-19 cases by neighbourhood was took from City of Toronto[@map], which is to visually show the distribution of COVID-19 cases in various Toronto communities
+```{r, echo=FALSE, fig.cap="COVID-19 Cases in Toronto", fig.align="center", out.width = '80%'}
+knitr::include_graphics("Cases.jpeg")
+```
+
+
+```{r, include=FALSE}
+raw_data <- read.csv("/Users/eileen/Downloads/COVID19 cases.csv")
+cases <- table(raw_data$Neighbourhood.Name)
+sort(cases,decreasing = TRUE)
+```
+
+After the useful data was extracted, the communities were sorted in order from large to small based on data number, and the top ten communities were selected as the study subjects to make Table 1
+
+: Table 1: COVID-19 Cases and Rates.
+
++-----------------------------------+---------------+
+| Neighbourhood                     | Cases         |
++===================================+===============+
+| Woburn                            | 6332          |
+|                                   |               |                    
++-----------------------------------+---------------+
+| Downsview-Roding-CFB              | 6027          |
+|                                   |               |
++-----------------------------------+---------------+
+| Waterfront-Communities-The Island | 5913          |
+|                                   |               |
++-----------------------------------+---------------+
+| Malvern                           | 5453          |
+|                                   |               |
++-----------------------------------+---------------+
+| Rouge                             | 5398          |
+|                                   |               |
++-----------------------------------+---------------+
+| West Humber-Clairville            | 5372          |
+|                                   |               |
++-----------------------------------+---------------+
+| Mount Olive-Silverstone-Jamestown | 5196          |
+|                                   |               |
++-----------------------------------+---------------+
+| Glenfield-Jane Heights            | 4676          |
+|                                   |               |
++-----------------------------------+---------------+
+| York University Heights           | 4338          |
+|                                   |               |
++-----------------------------------+---------------+
+| Islington-City Centre West        | 4058          |
+|                                   |               |
++-----------------------------------+---------------+
+
+Moreover, to calculate the rate of COVID-19 infection is necessary to exclude interference from population difference factors.For the rate calculation, I adopted the unit number of cases per 100,000, and the results are shown in Figure 2
+
+: Table 2: COVID-19 Cases and Rates.
+
++-----------------------------------+--------------------+
+| Neighbourhood                     | Cases per 100,000  |
++===================================+====================+
+| Woburn                            | - 12,129           |
+|                                   |                    |                    
++-----------------------------------+--------------------+
+| Downsview-Roding-CFB              | - 17,794           |
+|                                   |                    |
++-----------------------------------+--------------------+
+| Waterfront-Communities-The Island | - 9,246            |
+|                                   |                    |
++-----------------------------------+--------------------+
+| Malvern                           | - 12,737           |
+|                                   |                    |
++-----------------------------------+--------------------+
+| Rouge                             | - 11,861           |
+|                                   |                    |
++-----------------------------------+--------------------+
+| West Humber-Clairville            | - 16,451           |
+|                                   |                    |
++-----------------------------------+--------------------+
+| Mount Olive-Silverstone-Jamestown | - 16,089           |
+|                                   |                    |
++-----------------------------------+--------------------+
+| Glenfield-Jane Heights            | - 15,559           |
+|                                   |                    |
++-----------------------------------+--------------------+
+| York University Heights           | - 16,051           |
+|                                   |                    |
++-----------------------------------+--------------------+
+| Islington-City Centre West        | - 9558             |
+|                                   |                    |
++-----------------------------------+--------------------+
+
+
+# Results
+Combined the two tables, although Woburn has the highest total number of cases, the rate is lower than the bottom five communities. Among the most noteworthy is the Downsview-Roding-CFB neighbourhood, which ranks second in 6027 cases, and with the highest rate among the ten communities.
+
+Besides the Islington-City Centre West, the last four neighbourhoods all showed fairly high case rates with low numbers of cases. These neighbourhoods have higher rates may be because conditions of these areas are higher risk. Considering from Living and working conditions, include being essential workers who must go out for work, no paid sick leave benefits, overcrowded housing and public transportation, and barriers to other services. 
+
+Marginalized communities are more likely to have low-wage and essential jobs, and these jobs make workers cannot work from home. Systemic racism and discrimination are important factors of these inequalities. The impact of the COVID-19 pandemic is far more severe than the data showed, and the socio-economy was hit hard, along with more serious inequalities, challenges, and obstacles.
+
+\newpage
+
+
+# References
+
+
