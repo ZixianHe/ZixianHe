@@ -1,0 +1,52 @@
+---
+title: "A Suicide is Done Every Dozen Minutes"
+subtitle: "Some Facts and Some Attitudes"
+author: 
+  - Zixian He
+thanks: "Code and data are available at: LINK."
+date: "`r format(Sys.time(), '%d %B %Y')`"
+abstract: "Suicide is a complex individual behavior, sometimes even social behavior, and is affected by social, cultural, political, economic and other factors. It is not only the so-called [vulnerability], nor simply considered caused by some [diseases] such as psychological disorders. For each individual's suicide, specific problems should be analyzed; and the suicide rate of a group of people should be discussed from the perspective of public health and sociology."
+output:
+  bookdown::pdf_document2
+toc: FALSE
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(haven)
+getOption("repos")
+raw_data <- read_dta("/Users/eileen/Downloads/2021_stata (1)/gss2021.dta")
+```
+
+# Introduction
+Every year, 703,000 people die by suicide, and many attempt suicide. Suicide is a tragedy that affects families, communities and entire nations, with lasting effects on the loved ones of the deceased. Suicide occurs at all stages of the life cycle. In 2019, suicide was the fourth leading cause of death globally in the 15-29 age group.Suicide doesn't just happen in high-income countries, it's a global phenomenon across the world. In fact, in 2019, suicides in low- and middle-income countries accounted for more than 77% of global suicides. In the early days of the COVID-19 outbreak, there were concerns that anxiety, loneliness and economic uncertainty would lead to a rise in suicide rates. Instead, suicide rates in the U.S. fell for the second straight year in 2020, after 20 straight years of climbing, according to preliminary U.S. federal data released[@WHO].
+
+According to the poll data provided by the US General Social Survey, combined with the current development of the COVID-19 epidemic, we want to understand the views of American citizens on the behavior of suicide, so as to judge the trend of suicide rate in the United States. As the impact of the COVID-19 epidemic has not improved, we believe that the current general environment will affect the choice of survey participants. Our purpose is to understand the suicidal tendency of Americans in the current environment, to understand the main reasons why people choose to commit suicide and the age groups with high suicidal tendency, and to prepare relevant improvement policies in the future[@covid].
+
+A short survey was created and conducted to assess Americans' opinions. The sample include adults 18 or older in the United States who live in non-institutional housing at the time of interviewing, and the final sample size is 4031 completes from 27591 lines of sample. Due to the COVID-19 pandemic, the GSS was forced to change the way of conducting data collection, moving from in-person to address-based sampling and a push-to-web methodology. Mailing materials that show a web link to invite people to participate on the web, and phone option was also provided. As mentioned the changes before, we caution users to consider changes in the GSS methodology from a total survey error perspective, including measurement, non-response, coverage, and sampling error. We uses R[@citeR] tidyverse[@tidyverse], haven[@citehaven], and dplyr[@citedplyr] to process the data with the aim to make the data more concise. The ggplot2[@citeggplot2] is used to handle figures.
+
+# Discussion and Results
+
+## General Social Survey
+
+A survey aims to identify the main reasons for changes in the suicide rate in the United States based on Americans' acceptance of different causes of suicide by different age group, education level, and gender. The short survey includes 13 questions, which focus on categories relating to demographic and decision on different reasons of suicide. Our questions' potential answers were presented on a multiple choice basis for categorical options. We did this on the belief that all respondents will have an opinion on the topic of suicide, but most people would not like to express too much opinion on the subject or talk about lot in reality. Thus, we did not provide short answer questions in the survey. Beside, we avoid designing questions that order of options may have influence on respondents' choice. Moreover, the survey is also designed for respondents to answer in under 3 minutes to deter from survey fatigue and increase people's willingness to participate in the survey.
+
+## Results
+From the questions pertaining to the Americans' response to suicides (Figures 4 to 10), we see that Americans generally oppose to the behavior of suicide. The majority of responses in Figure 4 to Figure 10 fell between No to NA (prefer not to answer), with "NA" as the most popular response in each of the last five survey questions. The results displayed in Figure 4 (Do you think a person has the right to end his or her own life if this person Has an incurable disease?) show a noticeably opposite distribution compared to the other related questions, with higher proportions of respondents' response was "Yes" or "NA". While this may be indicative of a negative opinion towards the COVID-19 pandemic, COVID-19 may become one of the leading factors affecting suicide rate.
+
+According to the statistical results of the survey, most of the respondents who gave a clear answer to whether they should take suicidal behavior hold a refusal attitude (Figure 5 to 7). Except for the condition of incurable diseases, the result distribution is more inclined to support the party (Figure 4). However, when we combined voting results with age and education to look at the data, the results again contrasted. From the analysis of different age groups, respondents from the age group of 30 to 50 have a higher proportion of choosing the option of suicide, followed by respondents in the age group of 18, The lowest percentage was among respondents over the age of 65 (Figure 10). Similarly, the analysis results we obtained were different for respondents with different educational levels. Among the respondents, the proportion of graduates, bachelors, and high school graduates who support suicidal behavior is higher. Respondents with degree less than high school, the proportion of respondents who support suicide is 0; and the voting distribution of Associate/Junior college respondents is more even (Figure 9). The survey results of respondents in the age group of 30 to 50 may be related to the impact of the COVID-19 epidemic. The pandemic has made most people face greater pressure on employment competition. In addition, the pandemic has restricted people's daily activities, and life has become monotonous. The same problem is true for graduates. The pressure of job competition and future career pressure will affect the survey results to a certain extent.
+
+The relationship between large-scale outbreaks and suicide deaths has always been the focus of research in the field of public health. In addition to the impact on physical health, the impact of the epidemic on people's psychological level cannot be ignored. Suicide is different from other causes of death due to diseases and accidental death. Suicide, as an extreme behavior, has strong social negativity and can also be used as an important indicator to reflect social psychology. The epidemic has affected people's normal lives to varying degrees. By comparing the differences in suicide deaths before and after the outbreak, the impact of the epidemic on mental health can be judged. At the same time, the analysis of the differences in suicide deaths in different regions and different groups can identify which groups are the most sensitive and vulnerable under the impact of the epidemic.
+
+```{r, echo = FALSE, fig.cap="Distribution of the survey respondents' age (in years)"}
+library(ggplot2)
+library(dplyr)
+labels <- c("18-29 years", "30-39 years", "40-49 years", "50-64 years", "65-89 years")
+age_group <- cut(raw_data$age, 5, labels = labels)
+raw_data[, "age_group"] <- age_group
+ggplot(data = raw_data, aes(x = age_group)) +
+  ggtitle("Survey respondents' age") +
+  geom_bar(alpha = 0.8, color="orange", fill="steelblue")
+```
