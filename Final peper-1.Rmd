@@ -1,0 +1,471 @@
+---
+title: "Toronto is Now Seeking Input on Climate Actions to undertake."
+subtitle: "Key areas where lifestyle changes can have a significant impact, including food, housing, and personal transportation."
+author: 
+  - Zixian He
+thanks: "Code and data are available at: https://github.com/ZixianHe/starter-folder"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+abstract: "Since 2015, Canada is the only G7 country that has failed to reduce greenhouse gas emissions. As the country with the largest per capita greenhouse gas emissions in the world, the international pressure on Canada to reduce carbon emissions is growing. The characteristics of economic energy demand at this stage make carbon emission reduction relatively difficult [@co2]. Therefore, formulating carbon emission reduction policies at this stage is the most urgent task of the Canadian government. This paper organizes and analyzes the current net zero strategy residents survey, aims to figure out prioritize which climate actions should be implemented in the short term to make sure the city of Toronto meets its 2030 goals, reducing emissions by 65 percent from 1990 levels by 2030 [@data]. \\par\\textbf{Keywords:} Climate change, Net Zero Strategy, Buildings, Energy, Transportation, Waste, Decision-making"
+output:
+  bookdown::pdf_document2
+toc: FALSE
+bibliography: final references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)	
+library(opendatatoronto)
+library(dplyr)
+library(ggplot2)
+
+package <- show_package("77e593cf-877b-4bcc-bfdf-0b99e2935e5f")
+package
+ 
+data <- read.csv("/Users/eileen/Downloads/Raw data.csv",check.names = F)
+```
+
+
+# Introduction
+
+Various global changes have plagued our civilization, and people tend to think that climate change is the main cause of various global changes. Although global climate change is constrained by many large spatial factors, such as the relationship between the sun and the earth, the growing evidence shows that the factors of human activities can no longer be ignored [@ca1]. At the current level of understanding, scientists attribute the observed global warming effect to several gases, including carbon dioxide ($CO_2$), methane ($CH_4$), and nitrous oxide ($N_2O$), among others [@ca2]. Dubbed greenhouse gases (GHG), these gases can absorb lone-wave thermal radiation and increase the surface temperature of the Earth.
+
+Since the Industrial Revolution, the frequent human activities have seriously threatened the climate change of global survival and development.According to the report released by the United Nations Intergovernmental Panel on Climate Change (IPCC) "Climate Change 2021: The Physical Science Basis", the global average temperature has risen by 1.1°C since the mid-1800s. This brings about many natural disasters, including melting glaciers, hot and heat waves, rainstorms and floods, and more unusual weather [@ca3]. The key to combating climate change is to control carbon emissions, and the only way is to achieve carbon peaks first and then achieve carbon neutrality. The federal government of Toronto has released a related plan "2030 Emissions Reduction Plan: Canada's Next Steps for Clean Air and a Strong Economy", which aims for a 40% reduction in emissions from 2005 levels by 2030 and advance Canada’s progress towards achieving net-zero emissions by 2050 [@ca4]. Many countries and enterprises in the world have also begun to set "net zero" goals to tackle climate change. Net zero, which balances GHG removals and GHG emissions so that overall net emissions are zero. Achieving net zero is a daunting task.
+
+While Prime Minister Justin Trudeau has repeatedly stressed that Canada can meet the Paris Agreement - will cut 30 percent of emissions in 2030 from 2005 levels, the United Nations believes Canada can accomplish less than 85 percent of its tasks. The French Climate Action Network also noted in a report that Canada's current climate change program will lead to global temperatures rising by more than 4 degrees Celsius [@ca5]. Data from Environment and Climate Change Canada shows that, fossil fuel emissions account for more than 80% of Canada's total emissions, and Canada's greenhouse gas emissions increased by 2% between 2017 and 2018. Between 2005 and 2018, GHG emissions from Canada’s oil and gas industry increased by 23 percent from 158 million tonnes to 193 million tonnes; the oil and gas industry’s share of Canada’s total emissions increased by 5% during this period, overtaking transportation as Canada’s largest source of emissions, with oil sands undoubtedly playing a “key role [@ca6].” Therefore, Canada seems to be caught in a weird logical cycle. First of all, in order to achieve the net zero emission reduction target, energy conversion is one of the important measures, but this measure undoubtedly requires a lot of financial support, and the revenue from the oil sands project will play an important role in Canada energy transformation. Secondly, the implementation of net zero emission reduction also requires a large amount of capital investment. The reduction of financial support will undoubtedly push the difficulty of net zero task to a higher level.
+
+In response to City Council’s climate emergency declaration in 2019, aims to figure out prioritize which climate actions should be implemented in the short term to make sure the city of Toronto meets its 2030 goals, the City of Toronto took a survey asking for feedback. The consultation also asked residents to consider what these actions might look like in the community. These actions include building, energy, transportation, Sustainable Consumption & Waste, Green-space, Decision-Making and Equitable Engagement. I also would like to talk about if gender, age, income will influence the actions that people choose [@data]. In addition, given that the implementation of the new policy will have an impact on the lives of the people, whether the age, income, and gender of the participants will have an impact on the outcome of climate action decisions will also be discussed.
+
+
+# Data
+
+```{r, include=FALSE}
+Buildings <- data.frame(data[,1],data[,2],data[,3],data[,4],data[,5],data[,6])
+colnames(Buildings)=c("Buildings 1","Buildings 2","Buildings 3","Buildings 4","Buildings 5","Buildings 6")
+
+Energy <-data.frame(data[,9],data[,10],data[,11],data[,12],data[,13])
+colnames(Energy)=c("Energy 1","Energy 2","Energy 3","Energy 4","Energy 5")
+
+Transportation <- data.frame(data[,16],data[,17],data[,18],data[,19],data[,20],data[,21])
+colnames(Transportation)=c("Transportation 1","Transportation 2","Transportation 3","Transportation 4","Transportation 5","Transportation 6")
+
+SCW <- data.frame(data[,24],data[,25],data[,26])
+colnames(SCW)=c("S-C&Waste 1","S-C&Waste 2","S-C&Waste 3")
+summary(SCW)
+
+GDE <- data.frame(data[,29],data[,30],data[,31],data[,32],data[,33],data[,34],data[,35])
+colnames(GDE)=c("Greenspace&D-M&E-E 1","Greenspace&D-M&E-E 2","Greenspace&D-M&E-E 3","Greenspace&D-M&E-E 4","Greenspace&D-M&E-E 5","Greenspace&D-M&E-E 6","Greenspace&D-M&E-E 7")
+
+Info <- data.frame(data[,39],data[,53],data[,55],data[,57])
+colnames(Info)=c("Age","Gender","Housing","Income")
+
+new_data <- cbind(Buildings, Energy, Transportation, SCW, GDE, Info)
+```
+
+To help the City of Toronto meet its 2030 short-term greenhouse gas reduction goals and put Toronto on a path to net-zero emissions by 2050 or earlier, the city collected public feedback on the proposed TransformTO Net Zero Strategy climate action in a related online survey. I utilized the raw data of resident survey on Toronto’s open data portal [@data]. The data set is released by Environment & Energy, and the data is refreshed as available. The latest refresh date is January 5, 2022. The raw data reports climate actions results among approximately 1,025 Torontonians and related parties, including variables such as demographics, region, and climate actions in categories, and more. The paper uses R [@citeR], tidyverse [@tidyverse], and dplyr [@citedplyr] process the data with the aim to make the data more concise. The data type is a document, based on the purpose of the research and the characteristics of the data itself, I extracted 31 variables in the original data that were correlated with the conduct of subsequent studies and the analysis of the data.
+
+In the original data, the relevant climate actions under each category are regarded as separate data variables, and the five categories are Buildings, Energy, Transportation, Sustainable Consumption & Waste, Greenspace, Decision-Making and Equitable Engagement. And in the resident survey, participants provided insights on what climate actions might be challenging if implemented. The total number of variables is 57 in original data, and the new data include total 31 variables after processing. In addition to relevant climate action variables, Age, Income, Gender, and Housing Situation are also included in the new data, with the aim of investigating whether these variables have an impact on relevant climate action decisions. The part about the participants' opinions in the original data was removed. First, the results of this part are subjective, and secondly, these opinions cannot be processed as they are text descriptions, which may not support subsequent data analysis and chart production, may even affect the final result.
+
+Regarding data processing, I first extracted the columns about climate action in the original data according to five categories to form five new subsets, with information such as age and gender as the sixth subset, and then merged the subsets into a new data frame. Since the variable names of the original data are mostly a complete sentence, in order to ensure the beauty and simplicity of the icons and tables, the variable names need to be changed. In addition, each variable needs to be counted, including the total support and percentage of each decision, and the final related data are shown in Tables as following.
+
+```{r, include=FALSE}
+as.data.frame(table(new_data$`Buildings 1`))
+as.data.frame(table(new_data$`Buildings 2`))
+as.data.frame(table(new_data$`Buildings 3`))
+as.data.frame(table(new_data$`Buildings 4`))
+as.data.frame(table(new_data$`Buildings 5`))
+as.data.frame(table(new_data$`Buildings 6`))
+```
+
+```{r,include=FALSE}
+as.data.frame(table(new_data$`Energy 1`))
+as.data.frame(table(new_data$`Energy 2`))
+as.data.frame(table(new_data$`Energy 3`))
+as.data.frame(table(new_data$`Energy 4`))
+as.data.frame(table(new_data$`Energy 5`))
+```
+
+```{r,include=FALSE}
+as.data.frame(table(new_data$`Transportation 1`))
+as.data.frame(table(new_data$`Transportation 2`))
+as.data.frame(table(new_data$`Transportation 3`))
+as.data.frame(table(new_data$`Transportation 4`))
+as.data.frame(table(new_data$`Transportation 5`))
+as.data.frame(table(new_data$`Transportation 6`))
+```
+
+```{r,include=FALSE}
+as.data.frame(table(new_data$`S-C&Waste 1`))
+as.data.frame(table(new_data$`S-C&Waste 2`))
+as.data.frame(table(new_data$`S-C&Waste 3`))
+```
+
+```{r,include=FALSE}
+as.data.frame(table(new_data$`Greenspace&D-M&E-E 1`))
+as.data.frame(table(new_data$`Greenspace&D-M&E-E 2`))
+as.data.frame(table(new_data$`Greenspace&D-M&E-E 3`))
+as.data.frame(table(new_data$`Greenspace&D-M&E-E 4`))
+as.data.frame(table(new_data$`Greenspace&D-M&E-E 5`))
+as.data.frame(table(new_data$`Greenspace&D-M&E-E 6`))
+as.data.frame(table(new_data$`Greenspace&D-M&E-E 7`))
+```
+
+```{r,include=FALSE}
+as.data.frame(table(new_data$Age))
+as.data.frame(table(new_data$Gender))
+as.data.frame(table(new_data$Housing))
+as.data.frame(table(new_data$Income))
+```
+
+: Buildings priority climate actions
+
+| Buildings priority| Total | Percent |
+| :---- | :----: | :----: |
+| Buildings 1 (Continue...2030 or sooner) | 710 | 0.69 |
+| Buildings 2 (Require...City-owned buildings) | 405 | 0.40 |
+| Buildings 3 (Support...new construction) | 257 | 0.25 |
+| Buildings 4 (Set...homes and buildings) | 411 | 0.40 |
+| Buildings 5 (Support...building owners) | 737 | 0.72 |
+| Buildings 6 (Support...existing buildings) | 364 | 0.36 |
+
+**Buildings 1: Continue to implement the Toronto Green Standard sustainable design requirements for new developments and require net zero ready private buildings by 2030 or sooner.
+  
+  Buildings 2: Require net zero emissions for construction of City-owned buildings.
+  
+  Buildings 3: Support building owners to use low-carbon materials for new construction.
+  
+  Buildings 4: Set requirements to report on and limit greenhouse gas emissions from homes and buildings.
+  
+  Buildings 5: Support early action to make retrofits that improve efficiency, comfort and the switch off fossil fuel heating easier and more affordable for home and building owners.
+  
+  Buildings 6: Support the creation of jobs in the building sector and build industry capacity to enable rapid market transformation to scale up zero emission retrofits for existing buildings.
+
+
+: Energy priority climate actions
+
+| Energy priority| Total | Percent |
+| :---- | :----: | :----: |
+| Energy 1 (Produce renewable natural gas from waste) | 404 | 0.39 |
+| Energy 2 (Increase installation of...solar panels) | 684 | 0.67 |
+| Energy 3 (Support district...energy solutions) | 512 | 0.50 |
+| Energy 4 (Accelerate investment in energy storage) | 436 | 0.43 |
+| Energy 5 (Work with other...to enable local solutions.) | 565 | 0.55 |
+
+**Energy 1: Produce renewable natural gas from waste.
+
+  Energy 2: Increase installation of rooftop and ground mount solar panels.
+  
+  Energy 3: Support district energy system owners and developers with the implementation of low-carbon energy solutions.
+  
+  Energy 4: Accelerate investment in energy storage.
+  
+  Energy 5: Work with other levels of government to ensure low-carbon and resilient energy policies to enable local solutions.
+
+
+: Transportation priority climate actions
+
+| Transportation priority| Total | Percent |
+| :---- | :----: | :----: |
+| Transportation 1 (Increase uptake...through incentives) | 303 | 0.30 |
+| Transportation 2 (Increase electric...on private property) | 380 | 0.37 |
+| Transportation 3 (Expand usage of...strategies to move goods) | 367 | 0.36 |
+| Transportation 4 (Expand bike...and priority zones) | 629 | 0.61 |
+| Transportation 5 (Expand public transit...of bus rapid transit) | 642 | 0.63 |
+| Transportation 6 (Continue electrification of the TTC fleet) | 423 | 0.41 |
+
+**Transportation 1: Increase uptake of electric vehicles through incentives.
+  
+  Transportation 2: Increase electric vehicle charging in public spaces and on private property.
+  
+  Transportation 3: Expand usage of and support for low-emissions freight and last mile delivery strategies to move goods.
+  
+  Transportation 4: Expand bike and pedestrian infrastructure and priority zones.
+  
+  Transportation 5: Expand public transit and accelerate implementation of bus rapid transit.
+  
+  Transportation 6: Continue electrification of the TTC fleet.
+  
+
+: Sustainable consumption and waste priority climate actions
+
+| Sustainable consumption and waste priority| Total | Percent |
+| :---- | :----: | :----: |
+| S-C&Waste 1 (Conduct a city-wide...set a reduction target) | 370 | 0.36 |
+| S-C&Waste 2 (Reduce city-wide material...recovery of resources) | 743 | 0.73 |
+| S-C&Waste 3 (Continue outreach...on food and organic waste) | 384 | 0.38 |
+
+**S-C&Waste 1: Conduct a city-wide consumption-based emissions inventory and set a reduction target.
+  
+  S-C&Waste 2: Reduce city-wide material consumption and increase circularity (i.e., efficient re-use and recovery of resources).
+  
+  S-C&Waste 3: Continue outreach and engagement on city-wide waste reduction and diversion, with a focus on food and organic waste.
+  
+
+: Greenspace, decision-making and equitable engagement priority
+climate actions
+
+| Greenspace & D-M & E-E priority| Total | Percent |
+| :---- | :----: | :----: |
+| Greenspace&D-M&E-E 1 (Increase tree...and enhance greenspaces) | 676 | 0.66 |
+| Greenspace&D-M&E-E 2 (Achieve equitable...it is most needed) | 597 | 0.58 |
+| Greenspace&D-M&E-E 3 (Corporate-wide...decision-making process) | 628 | 0.61 |
+| Greenspace&D-M&E-E 4 (Focus outreach on...local climate action) | 302 | 0.30 |
+| Greenspace&D-M&E-E 5 (Work with Indigenous...share knowledge) | 408 | 0.40 |
+| Greenspace&D-M&E-E 6 (Focus on youth engagement and leadership) | 242 | 0.24 |
+| Greenspace&D-M&E-E 7 (Establish a Climate Advisory Group) | 246 | 0.24 |
+
+**Greenspace&D-M&E-E 1: Increase tree canopy cover, biodiversity and enhance greenspaces.
+  
+  Greenspace&D-M&E-E 2: Achieve equitable distribution of the urban forest, increasing tree canopy where it is most needed.
+  
+  Greenspace&D-M&E-E 3: Corporate-wide adoption of a climate lens for all new City operating programs and capital projects to incorporate climate considerations in the municipal decision-making process.
+  
+  Greenspace&D-M&E-E 4: Focus outreach on equity-seeking groups to lead and implement local climate action.
+  
+  Greenspace&D-M&E-E 5: Work with Indigenous communities to share knowledge.
+  
+  Greenspace&D-M&E-E 6: Focus on youth engagement and leadership.
+  
+  Greenspace&D-M&E-E 7: Establish a Climate Advisory Group.
+
+
+: Demographics of the survey participants-Gender
+
+| Gender| Total | Percent |
+| :----: | :----: | :----: |
+| Woman | 433 | 0.42 |
+| Man | 343 | 0.34 |
+| Trans woman | 1 | - |
+| Gender non-binary | 24 | 0.02 |
+| Two-Spirit | 2 | - |
+| Prefer not to answer | 70 | 0.07 |
+
+
+: Demographics of the survey participants-Age
+
+| Age | Total | Percent |
+| :----: | :----: | :----: |
+| 10-19 | 15 | 0.01 |
+| 20-24 | 39 | 0.04 |
+| 25-29 | 79 | 0.08 |
+| 30-54 | 440 | 0.43 |
+| 55-64 | 132 | 0.13 |
+| 65-74 | 124 | 0.12 |
+| 75+ | 50 | 0.05 |
+| Prefer not to answer | 16 | 0.02 |
+
+
+: Demographics of the survey participants-Income
+
+| Income | Total | Percent |
+| :----: | :----: | :----: |
+| 0 - $29,999 | 37 | 0.04 |
+| $30,000 - 49,999 | 65 | 0.06 |
+| $50,000 - 69,999 | 74 | 0.07 |
+| $70,000 - 99,999 | 145 | 0.14 |
+| $100,000 - 149,999 | 167 | 0.16 |
+| $150,000 or more | 207 | 0.20 |
+| Don't know | 20 | 0.02 |
+| Prefer not to answer | 175 | 0.17 |
+
+
+: Demographics of the survey participants- Housing situation
+
+| Housing situation | Total | Percent |
+| :----: | :----: | :----: |
+| Home owner | 548 | 0.54 |
+| Renting | 238 | 0.23 |
+| Permanently living with parent(s) or other family member(s) | 56 | 0.05 |
+| Temporarily staying with others (no fixed address) | 1 | - |
+| Prefer not to answer | 34 | 0.03 |
+
+
+# Results
+
+In the survey, based on each category of climate action, participants were asked to choose: up to three "buildings","energy", and "transportation" actions they believe are the highest priority; one or two "sustainable consumption & waste" actions they believe are the highest priority; and up to four "greenspace, decision-making and equitable engagement actions that they believe are the highest priority. Thus, in the final figures (Figures 5 to 9), I do the same treatment, highlighting relative highest total amount of actions in each category.
+
+According to the statistical results of the survey, the two highest priority buildings climate actions for implementation are: B5 - Support early action to make retrofits that improve efficiency, comfort and the switch away from fossil fuel heating easier and more affordable for home and building owners, which support is up to 72 percent (Table 1); B1 - Continue to implement the Toronto Green Standard sustainable design requirements for new developments and require net zero ready private buildings by 2030 or sooner, the percent of survey respondents is up to 69 percent (Table 1). Similarly, the two highest priority buildings climate actions for implementation includes Energy 2 - Increase installation of rooftop and ground mount solar panels, and Energy 5 - Work with other levels of government to ensure low-carbon and resilient energy policies to enable local solutions. Energy 2 has 67 percent and Energy 5 has 55 percent (Table 2). Then for transportation priority climate actions, Tr4 - Expand bike and pedestrian infrastructure and priority zones and Tr5 - Expand public transit and accelerate implementation of bus rapid transit have 61 percent and 63 percent approval rating respectively (Table 3). Interestingly, of the three climate action options on sustainable consumption & waste, S-C&Waste 2 - Reduce city-wide material consumption and increase circularity (i.e., efficient re-use and recovery of resources) gets a landslide victory, which support is up to 73 percent (Table 4). Finally, the three highest priority greenspace, decision-making and equitable engagement climate actions for implementation are: GDE 1 - Increase tree canopy cover, biodiversity and enhance greenspaces, GDE 2 - Achieve equitable distribution of the urban forest, increasing tree canopy where it is most needed, and GDE 3 - Corporate-wide adoption of a climate lens for all new City operating programs and capital projects to incorporate climate considerations in the municipal decision-making process; they have 66 percent, 58 percent, and 61 percent approval rating respectively (Table 5).
+
+Consider to demographics of the survey participants, most participants are woman and man, while woman accounted for 8% more than man (Table 6). However, it is worth noting that the differences in economic income and age of the participants were more obvious. Among them, nearly half of the participants are between the ages of 30-54 (Table 7). At the same time, the proportion of participants with an annual income of more than 150,000 dollars is also the highest, reaching 20%, followed by the annual income of 70,000-99,999 and 100,000 to 149,999 (Table 8). Then for the housing situation of participants, more than half of participants are home owner, which reaches 54 percent, and 23 percent of participants are in renting situation. Combining age, income and housing, these three data seem to be in line with reality, because people will pursue higher-level psychological needs when material conditions are met, so they are more involved in such activities.
+
+
+```{r,echo=FALSE, fig.cap="Demographics of the survey participants-Age"}
+ggplot(data = new_data, aes(x = Age)) +
+  ggtitle("Demographics of the survey participants-Age") +
+  geom_bar(alpha = 0.8, color="orange", fill="steelblue")
+```
+
+```{r, echo=FALSE, fig.cap="Demographics of the survey participants-Gender"}
+ggplot(data = new_data, aes(x = Gender)) +
+  ggtitle("Demographics of the survey participants-Gender") +
+  geom_bar(alpha = 0.8, color="black", fill="plum4")+
+  coord_flip()
+```
+
+```{r, echo=FALSE, fig.cap="Demographics of the survey participants-Income (year)"}
+ggplot(data = new_data, aes(x = Income)) +
+  ggtitle("Demographics of the survey participants-Income") +
+  geom_bar(alpha = 0.8, color="lightsalmon2", fill="olivedrab4") +
+  coord_flip()
+```
+
+```{r, echo=FALSE, fig.cap="Demographics of the survey participants-Housing Situation"}
+ggplot(data = new_data, aes(x = Housing)) +
+  ggtitle("Demographics of the survey participants-Housing?") +
+  geom_bar(alpha = 0.8, color="olivedrab3", fill="tan1")+
+  coord_flip()
+```
+
+```{r, echo=FALSE, fig.cap="Highest priority climate actions-Buildings"}
+b = c(710,405,257,411,737,364)
+
+barplot(b,
+    main="Buildings priority climate actions",
+    col=c("lightblue3"),
+    names.arg=c("Bs 1","Bs 2","Bs 3","Bs 4","Bs 5","Bs 6"),
+    ylab = "count",
+    xlab = "climate actions - buidlings",
+    ylim = c(0,810)
+)
+text(0.73,750,"710",col=("red"))
+text(1.9,445,"405",col=("orange2"))
+text(3.07,297,"257",col=("orange2"))
+text(4.24,451,"411",col=("orange2"))
+text(5.49,787,"737",col=("red"))
+text(6.7,404,"364",col=("orange2"))
+```
+
+
+```{r, echo=FALSE, fig.cap="Highest priority climate actions-Energy"}
+e = c(404,684,512,436,565)
+
+barplot(e,
+    main="Energy priority climate actions",
+    col=c("mistyrose2"),
+    names.arg=c("Energy 1","Energy 2","Energy 3","Energy 4","Energy 5"),
+    ylab = "count",
+    xlab = "climate actions - energy",
+    ylim = c(0,770)
+)
+text(0.73,444,"404",col=("black"))
+text(1.9,724,"684",col=("red"))
+text(3.07,552,"512",col=("black"))
+text(4.24,476,"436",col=("black"))
+text(5.49,605,"565",col=("red"))
+```
+
+
+```{r, echo=FALSE, fig.cap="Highest priority climate actions-Transportation"}
+t = c(303,380,367,629,642,423)
+
+barplot(t,
+    main="Transportation priority climate actions",
+    col=c("navajowhite1"),
+    names.arg=c("Tr 1",
+                "Tr 2",
+                "Tr 3",
+                "Tr 4",
+                "Tr 5",
+                "Tr 6"),
+    ylab = "count",
+    xlab = "climate actions - transportation",
+    ylim = c(0,770)
+)
+text(0.73,343,"303",col=("steelblue4"))
+text(1.9,420,"380",col=("steelblue4"))
+text(3.07,407,"367",col=("steelblue4"))
+text(4.24,679,"629",col=("red"))
+text(5.49,682,"642",col=("red"))
+text(6.7,463,"423",col=("steelblue4"))
+```
+
+
+```{r, echo=FALSE, fig.cap="Highest priority climate actions-Sustainable Consumption & Waste"}
+s = c(370,743,384)
+
+barplot(s,
+    main="Sustainable Consumption & Waste priority climate actions",
+    col=c("lightsalmon2"),
+    names.arg=c("S-C&Waste 1",
+                "S-C&Waste 2",
+                "S-C&Waste 3"),
+    ylab = "count",
+    xlab = "climate actions - sustainable consumption & waste",
+    ylim = c(0,850)
+)
+text(0.73,410,"370",col=("blue"))
+text(1.9,783,"743",col=("red"))
+text(3.07,424,"384",col=("blue"))
+```
+
+
+```{r, echo=FALSE, fig.cap="Highest priority climate actions-Greenspace, Decision-Making and Equitable Engagement"}
+t = c(676,597,628,302,408,242,246)
+
+barplot(t,
+    main="Greenspace, Decision-Making and Equitable Engagement priority \n
+    climate actions",
+    col=c("lavender"),
+    names.arg=c("GDE 1",
+                "GDE 2",
+                "GDE 3",
+                "GDE 4",
+                "GDE 5",
+                "GDE 6",
+                "GDE 7"),
+    ylab = "count",
+    xlab = "climate actions - greenspace, decision-making and equitable engagement",
+    ylim = c(0,770)
+)
+text(0.73,716,"676",col=("red"))
+text(1.9,637,"597",col=("red"))
+text(3.07,668,"628",col=("red"))
+text(4.24,342,"302",col=("steelblue4"))
+text(5.49,448,"408",col=("steelblue4"))
+text(6.7,282,"242",col=("steelblue4"))
+text(7.87,286,"246",col=("steelblue4"))
+```
+
+
+\newpage
+
+# Discussion
+
+Support for carbon emission reduction actions is now inseparable from government initiatives and policy making. But it seems not easy to ensure that policy plans proceed as scheduled. For example, the United States signed the "Paris Agreement" on April 22, 2016, during the Obama administration. In June 2017, the Trump administration, announced the US withdrawal from the "Paris Agreement." That same year, it announced that it would abolish the Clean Power Plan and replace it with affordable energy programs. The move is intended to burden environmental policies on businesses and increase employment by increasing the consumption of fossil fuels [@us1]. In 2021, the Biden administration promised that the United States would return to the "Paris agreement" and proposed the goal of de-carbonizing electricity by 2035 and achieve net zero greenhouse gas emissions by 2050. To achieve the "30/50" goal, the Biden administration plans to spend 3 billion dollars on the climate plan [@us2]. On March 30, 2022, Canada's federal government has announced an emissions reduction plan involving $9.1 billion in new investment. The plan involves a number of measures, including building charging infrastructure, providing financial support to promote zero-emission vehicle sales, supporting clean medium and heavy-duty transportation projects, advancing the implementation of net-zero emissions on the grid, and more [@ca4].
+
+## Implementation challenges on buildins and energy climate actions
+On buildings climate actions, the first highest priority includes Support early action to make retrofits that improve efficiency, comfort, and the switch away from fossil fuel heating easier and more affordable for home and building owners. In order to reduce the negative impact of existing building emissions and make cities carbon neutral faster, Increase installation of rooftop and ground-mount solar panels can be an option for home retrofits, this is also the first energy priority climate action that participants support to implementation. Besides, to move away from fossil fuel heating, regulatory restrictions on natural gas have also been established imminently. Another action is continue to implement the Toronto Green Standard sustainable design requirements for new developments and require net zero ready private buildings by 2030 or sooner, retrofitting homes and buildings in order to achieve net zero emissions from new developments is bound to be a complex process, followed by the need for low carbon materials. We need to pay attention to whether the supply of funds can meet the implementation of climate action in buildings; secondly, the high cost of retrofitting to Canadians may reduce people's enthusiasm for participation; and finally, we need to note that the proportion of renter population is not low, whether the renovation will cause the rent increase and negatively affect the tenants.
+
+## Implementation challenges on transportation climate actions
+Expand public transit and accelerate implementation of bus rapid transit and Expand bike and pedestrian infrastructure and priority zones are two highest climate actions in transportation. The purpose of expanding public transportation is to change the phenomenon that limited road resources are occupied by a large number of inefficient individual traffic. At the same time, urban public transportation is a guarantee to solve the travel problem of low-income people, and the exhaust emissions are also relatively low. However, this move is greatly affected by the factors of residential area. Citizens' travel is affected by the unreliability of Canada's transportation system, which may make it difficult for them to give up the car as their primary mode of transportation. Secondly, residents outside the city center are more car-dependent and less likely to use public transportation as their primary mode of travel.
+
+## Implementation challenges on sustainable consumption and waste climate actions
+The main action is reduce city-wide material consumption and increase circularity (i.e., efficient re-use and recovery of resources) under the category. Increasing the recycling and circularity of materials may need to be considered from the design of the product, including material selection, disassembly, material recycling value, reducing packaging, etc., which may increase the cost of products to a certain extent, such as plastic bags Compared with sustainable bags, the former is cheaper and more accessible to the people, and increasing the circularity of materials may require residents to consume less. This is a difficult challenge for both the economy and consumers
+
+## Implementation challenges on Greenspace, decision-making and equitable engagement climate actions
+According to increase tree canopy cover, biodiversity and enhance greenspaces, achieve equitable distribution of the urban forest, increasing tree canopy where it is most needed, and Corporate-wide adoption of a climate lens for all new City operating programs and capital projects to incorporate climate considerations in the municipal decision-making process. The improvement of environmental quality by trees is not unfamiliar to people, but the maintenance cost of trees is often overlooked. The cost of trees starts from the planting period, and the subsequent cultivation and maintenance will continue to increase. There may be considerable economic pressure on both residents and cities.
+
+
+## Weaknesses and next steps
+As with other survey methodology, ours contains so limitations and weakness. From the perspective of data, our sample data is too small, the total number of participants is only 1023, which also includes participants who did not answer some questions, the data may not be representative. In addition, the first digits of postal codes and ethnic cultural backgrounds were included in the original data, but were not included in the new data created, both of which may have an impact on the buildings and transportation climate action data, because the choice of buildings and public transportation is related to the residential area to a certain extent, it will affect the judgment of participants in decision-making. Due to data limitations, this article does not establish relative figures of age, income and climate actions in each category.
+
+\newpage
+
+\appendix
+
+# Appendix {-}
+```{r, echo = FALSE, fig.align="left", out.width = '100%'}
+knitr::include_graphics("01.jpg")
+knitr::include_graphics("02.jpg")
+knitr::include_graphics("03.jpg")
+knitr::include_graphics("04.jpg")
+knitr::include_graphics("05.jpg")
+```
+
+
+
+\newpage
+
+
+# References
